@@ -3,66 +3,273 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sadara Test</title>
+  <title>Sadara Greeting Card</title>
   <style>
-    body {
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
       margin: 0;
+      width: 100%;
+      height: 100%;
+      font-family: Arial, Helvetica, sans-serif;
+      overflow: hidden;
       background: #e9e4da;
-      font-family: Arial, sans-serif;
+    }
+
+    .page {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background: #e9e4da;
+    }
+
+    .bg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 1;
+    }
+
+    .logo {
+      position: absolute;
+      top: 5%;
+      left: 4%;
+      width: 15.5%;
+      max-width: 250px;
+      min-width: 110px;
+      z-index: 5;
+    }
+
+    .eid-title {
+      position: absolute;
+      top: 23%;
+      left: 6%;
+      width: 27%;
+      max-width: 460px;
+      min-width: 180px;
+      z-index: 5;
+    }
+
+    .message {
+      position: absolute;
+      left: 3.8%;
+      top: 57%;
+      width: 39%;
+      max-width: 760px;
+      min-width: 240px;
+      z-index: 5;
+    }
+
+    .plant {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      width: 55%;
+      max-width: 980px;
+      z-index: 4;
+    }
+
+    .input-area {
+      position: absolute;
+      left: 5.2%;
+      bottom: 10.5%;
+      width: 30%;
+      min-width: 300px;
+      z-index: 10;
+    }
+
+    .input-wrap {
+      display: flex;
+      align-items: center;
+      background: rgba(255,255,255,0.96);
+      border-radius: 999px;
+      padding: 5px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    }
+
+    .input-wrap input {
+      flex: 1;
+      border: none;
+      outline: none;
+      background: transparent;
+      font-size: 18px;
+      color: #6b6b6b;
+      padding: 14px 20px;
       text-align: center;
     }
 
-    .wrap {
-      padding: 20px;
+    .input-wrap input::placeholder {
+      color: #7b7b7b;
+      opacity: 1;
     }
 
-    img {
-      max-width: 90%;
-      height: auto;
-      display: block;
-      margin: 20px auto;
-      border: 1px solid #ccc;
-    }
-
-    .row {
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-      margin-top: 20px;
-      flex-wrap: wrap;
-    }
-
-    input {
-      padding: 12px 16px;
-      border-radius: 30px;
+    .send-btn {
       border: none;
-      width: 260px;
-    }
-
-    button {
-      padding: 12px 20px;
-      border-radius: 30px;
-      border: none;
-      background: #555;
-      color: white;
+      background: #5a5a5a;
+      color: #fff;
+      border-radius: 999px;
+      padding: 14px 32px;
+      font-size: 18px;
+      font-weight: 700;
       cursor: pointer;
+      min-width: 110px;
+    }
+
+    .lang-switch {
+      position: absolute;
+      right: 3.5%;
+      bottom: 4.3%;
+      display: flex;
+      align-items: center;
+      background: #6a6a6a;
+      border-radius: 999px;
+      padding: 4px;
+      z-index: 10;
+      gap: 2px;
+    }
+
+    .lang-switch button {
+      border: none;
+      background: transparent;
+      color: #fff;
+      padding: 10px 16px;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      min-width: 62px;
+    }
+
+    .lang-switch button.active {
+      background: rgba(255,255,255,0.14);
+    }
+
+    @media (max-width: 900px) {
+      .bg {
+        object-fit: cover;
+      }
+
+      .logo {
+        top: 4%;
+        left: 7%;
+        width: 28%;
+        min-width: 100px;
+      }
+
+      .eid-title {
+        top: 15%;
+        left: 15%;
+        width: 58%;
+      }
+
+      .message {
+        top: 46%;
+        left: 9%;
+        width: 82%;
+      }
+
+      .plant {
+        width: 82%;
+        right: 9%;
+        bottom: 0;
+      }
+
+      .input-area {
+        left: 14%;
+        bottom: 28%;
+        width: 72%;
+        min-width: 0;
+      }
+
+      .input-wrap input {
+        font-size: 16px;
+        padding: 13px 14px;
+      }
+
+      .send-btn {
+        font-size: 16px;
+        padding: 13px 22px;
+        min-width: 100px;
+      }
+
+      .lang-switch {
+        right: 50%;
+        transform: translateX(50%);
+        bottom: 3%;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <h2>Image Loading Test</h2>
+  <div class="page">
+    <img class="bg" src="BG-horizontal.png" alt="Background" />
+    <img class="logo" src="Logo-horizontal.png" alt="Sadara Logo" />
+    <img class="eid-title" id="eidTitle" src="Eid%20Mubarak-horizontal.png" alt="Eid Mubarak" />
+    <img class="message" id="messageImg" src="Best-Wishes-Bi-horizontal.png" alt="Greeting Message" />
+    <img class="plant" src="Icon-horizontal.png" alt="Plant" />
 
-    <img src="Logo-horizontal.png" alt="Logo">
-    <img src="Eid Mubarak-horizontal.png" alt="Eid Title">
-    <img src="Best-Wishes-Bi-horizontal.png" alt="Message">
-    <img src="Icon-horizontal.png" alt="Plant">
-    <img src="BG-horizontal.png" alt="Background">
+    <div class="input-area">
+      <div class="input-wrap">
+        <input id="nameInput" type="text" maxlength="40" placeholder="...اكتب اسمك هنا" dir="rtl" />
+        <button class="send-btn" id="sendBtn">Send</button>
+      </div>
+    </div>
 
-    <div class="row">
-      <input placeholder="Write your name here...">
-      <button>Send</button>
+    <div class="lang-switch">
+      <button id="btnEn" onclick="setLang('en')">EN</button>
+      <button id="btnAr" onclick="setLang('ar')">عربي</button>
+      <button id="btnBoth" class="active" onclick="setLang('both')">AR&EN</button>
     </div>
   </div>
+
+  <script>
+    function setActive(lang) {
+      document.getElementById('btnEn').classList.remove('active');
+      document.getElementById('btnAr').classList.remove('active');
+      document.getElementById('btnBoth').classList.remove('active');
+
+      if (lang === 'en') document.getElementById('btnEn').classList.add('active');
+      if (lang === 'ar') document.getElementById('btnAr').classList.add('active');
+      if (lang === 'both') document.getElementById('btnBoth').classList.add('active');
+    }
+
+    function setLang(lang) {
+      const input = document.getElementById('nameInput');
+      const msg = document.getElementById('messageImg');
+
+      if (lang === 'en') {
+        msg.src = 'Best-Wishes-Eng-horizontal.png';
+        input.placeholder = 'Write your name here...';
+        input.dir = 'ltr';
+        document.getElementById('sendBtn').textContent = 'Send';
+      } else if (lang === 'ar') {
+        msg.src = 'Best-Wishes-Ar-horizontal.png';
+        input.placeholder = '...اكتب اسمك هنا';
+        input.dir = 'rtl';
+        document.getElementById('sendBtn').textContent = 'إرسال';
+      } else {
+        msg.src = 'Best-Wishes-Bi-horizontal.png';
+        input.placeholder = '...اكتب اسمك هنا';
+        input.dir = 'rtl';
+        document.getElementById('sendBtn').textContent = 'Send';
+      }
+
+      setActive(lang);
+    }
+
+    document.getElementById('sendBtn').addEventListener('click', function () {
+      const name = document.getElementById('nameInput').value.trim();
+      if (!name) {
+        alert('Please enter your name');
+        return;
+      }
+      alert('Next step: generate card for ' + name);
+    });
+  </script>
 </body>
 </html>
