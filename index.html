@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sadara Greeting Card</title>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <style>
     * {
       box-sizing: border-box;
@@ -14,8 +15,21 @@
       width: 100%;
       height: 100%;
       font-family: Arial, Helvetica, sans-serif;
-      overflow: hidden;
       background: #e9e4da;
+    }
+
+    body {
+      overflow-x: hidden;
+    }
+
+    .screen {
+      display: none;
+      width: 100%;
+      min-height: 100vh;
+    }
+
+    .screen.active {
+      display: block;
     }
 
     .page {
@@ -149,11 +163,99 @@
       background: rgba(255,255,255,0.14);
     }
 
-    @media (max-width: 900px) {
-      .bg {
-        object-fit: cover;
-      }
+    .preview-screen {
+      min-height: 100vh;
+      background: #07111e;
+      display: none;
+      padding: 26px 16px 34px;
+    }
 
+    .preview-screen.active {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+    }
+
+    .card-shell {
+      width: min(430px, 100%);
+    }
+
+    .card-export {
+      width: 100%;
+      aspect-ratio: 9 / 16;
+      position: relative;
+      overflow: hidden;
+      border-radius: 26px;
+      background: #efe8dc;
+      box-shadow: 0 18px 40px rgba(0,0,0,0.28);
+    }
+
+    .card-export img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+    }
+
+    .card-name {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 76%;
+      text-align: center;
+      color: #5b5b5b;
+      font-weight: 800;
+      line-height: 1.15;
+      word-break: break-word;
+      font-size: clamp(24px, 4vw, 34px);
+      z-index: 5;
+    }
+
+    .card-name.en {
+      top: 48%;
+      direction: ltr;
+    }
+
+    .card-name.ar {
+      top: 43%;
+      direction: rtl;
+    }
+
+    .card-name.both {
+      top: 50%;
+      direction: ltr;
+    }
+
+    .actions {
+      width: min(430px, 100%);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .action-btn {
+      border: none;
+      cursor: pointer;
+      height: 58px;
+      border-radius: 999px;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .action-btn.primary {
+      background: linear-gradient(180deg, #3f83ff 0%, #2f6ff1 100%);
+      color: white;
+    }
+
+    .action-btn.secondary {
+      background: rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.92);
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+
+    @media (max-width: 900px) {
       .logo {
         top: 4%;
         left: 7%;
@@ -206,28 +308,62 @@
   </style>
 </head>
 <body>
-  <div class="page">
-    <img class="bg" src="BG-horizontal.png" alt="Background" />
-    <img class="logo" src="Logo-horizontal.png" alt="Sadara Logo" />
-    <img class="eid-title" id="eidTitle" src="Eid%20Mubarak-horizontal.png" alt="Eid Mubarak" />
-    <img class="message" id="messageImg" src="Best-Wishes-Bi-horizontal.png" alt="Greeting Message" />
-    <img class="plant" src="Icon-horizontal.png" alt="Plant" />
 
-    <div class="input-area">
-      <div class="input-wrap">
-        <input id="nameInput" type="text" maxlength="40" placeholder="...اكتب اسمك هنا" dir="rtl" />
-        <button class="send-btn" id="sendBtn">Send</button>
+  <!-- LANDING SCREEN -->
+  <section id="landingScreen" class="screen active">
+    <div class="page">
+      <img class="bg" src="BG-horizontal.png" alt="Background" />
+      <img class="logo" src="Logo-horizontal.png" alt="Sadara Logo" />
+      <img class="eid-title" id="eidTitle" src="Eid%20Mubarak-horizontal.png" alt="Eid Mubarak" />
+      <img class="message" id="messageImg" src="Best-Wishes-Bi-horizontal.png" alt="Greeting Message" />
+      <img class="plant" src="Icon-horizontal.png" alt="Plant" />
+
+      <div class="input-area">
+        <div class="input-wrap">
+          <input id="nameInput" type="text" maxlength="40" placeholder="...اكتب اسمك هنا" dir="rtl" />
+          <button class="send-btn" id="sendBtn" type="button">Send</button>
+        </div>
+      </div>
+
+      <div class="lang-switch">
+        <button id="btnEn" type="button" onclick="setLang('en')">EN</button>
+        <button id="btnAr" type="button" onclick="setLang('ar')">عربي</button>
+        <button id="btnBoth" type="button" class="active" onclick="setLang('both')">AR&EN</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- PREVIEW / DOWNLOAD SCREEN -->
+  <section id="previewScreen" class="preview-screen">
+    <div class="card-shell">
+      <div id="exportCard" class="card-export">
+        <img id="previewBase" src="Best-Wishes-bi-vertical.png" alt="Final Card" />
+        <div id="previewName" class="card-name both">Ahmed</div>
       </div>
     </div>
 
-    <div class="lang-switch">
-      <button id="btnEn" onclick="setLang('en')">EN</button>
-      <button id="btnAr" onclick="setLang('ar')">عربي</button>
-      <button id="btnBoth" class="active" onclick="setLang('both')">AR&EN</button>
+    <div class="actions">
+      <button id="downloadBtn" class="action-btn primary" type="button">⬇ Download Card</button>
+      <button id="newCardBtn" class="action-btn secondary" type="button">↻ New Card</button>
     </div>
-  </div>
+  </section>
 
   <script>
+    const landingScreen = document.getElementById('landingScreen');
+    const previewScreen = document.getElementById('previewScreen');
+
+    const nameInput = document.getElementById('nameInput');
+    const sendBtn = document.getElementById('sendBtn');
+
+    const messageImg = document.getElementById('messageImg');
+    const previewBase = document.getElementById('previewBase');
+    const previewName = document.getElementById('previewName');
+
+    const downloadBtn = document.getElementById('downloadBtn');
+    const newCardBtn = document.getElementById('newCardBtn');
+
+    let currentLang = 'both';
+
     function setActive(lang) {
       document.getElementById('btnEn').classList.remove('active');
       document.getElementById('btnAr').classList.remove('active');
@@ -239,37 +375,95 @@
     }
 
     function setLang(lang) {
-      const input = document.getElementById('nameInput');
-      const msg = document.getElementById('messageImg');
+      currentLang = lang;
 
       if (lang === 'en') {
-        msg.src = 'Best-Wishes-Eng-horizontal.png';
-        input.placeholder = 'Write your name here...';
-        input.dir = 'ltr';
-        document.getElementById('sendBtn').textContent = 'Send';
+        messageImg.src = 'Best-Wishes-Eng-horizontal.png';
+        previewBase.src = 'Best-Wishes-Eng-vertical.png';
+        nameInput.placeholder = 'Write your name here...';
+        nameInput.dir = 'ltr';
+        sendBtn.textContent = 'Send';
+        downloadBtn.textContent = '⬇ Download Card';
+        newCardBtn.textContent = '↻ New Card';
+        previewName.className = 'card-name en';
       } else if (lang === 'ar') {
-        msg.src = 'Best-Wishes-Ar-horizontal.png';
-        input.placeholder = '...اكتب اسمك هنا';
-        input.dir = 'rtl';
-        document.getElementById('sendBtn').textContent = 'إرسال';
+        messageImg.src = 'Best-Wishes-Ar-horizontal.png';
+        previewBase.src = 'Best-Wishes-Ar-vertical.png';
+        nameInput.placeholder = '...اكتب اسمك هنا';
+        nameInput.dir = 'rtl';
+        sendBtn.textContent = 'إرسال';
+        downloadBtn.textContent = '⬇ تحميل البطاقة';
+        newCardBtn.textContent = '↻ بطاقة جديدة';
+        previewName.className = 'card-name ar';
       } else {
-        msg.src = 'Best-Wishes-Bi-horizontal.png';
-        input.placeholder = '...اكتب اسمك هنا';
-        input.dir = 'rtl';
-        document.getElementById('sendBtn').textContent = 'Send';
+        messageImg.src = 'Best-Wishes-Bi-horizontal.png';
+        previewBase.src = 'Best-Wishes-bi-vertical.png';
+        nameInput.placeholder = '...اكتب اسمك هنا';
+        nameInput.dir = 'auto';
+        sendBtn.textContent = 'Send';
+        downloadBtn.textContent = '⬇ Download Card';
+        newCardBtn.textContent = '↻ New Card';
+        previewName.className = 'card-name both';
       }
 
       setActive(lang);
     }
 
-    document.getElementById('sendBtn').addEventListener('click', function () {
-      const name = document.getElementById('nameInput').value.trim();
-      if (!name) {
-        alert('Please enter your name');
+    sendBtn.addEventListener('click', function () {
+      const enteredName = nameInput.value.trim();
+
+      if (!enteredName) {
+        if (currentLang === 'ar') {
+          alert('يرجى كتابة الاسم أولاً');
+        } else {
+          alert('Please enter your name');
+        }
         return;
       }
-      alert('Next step: generate card for ' + name);
+
+      previewName.textContent = enteredName;
+      landingScreen.classList.remove('active');
+      previewScreen.classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     });
+
+    newCardBtn.addEventListener('click', function () {
+      previewScreen.classList.remove('active');
+      landingScreen.classList.add('active');
+      nameInput.value = '';
+      nameInput.focus();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    nameInput.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') {
+        sendBtn.click();
+      }
+    });
+
+    downloadBtn.addEventListener('click', async function () {
+      try {
+        const canvas = await html2canvas(document.getElementById('exportCard'), {
+          scale: 3,
+          useCORS: true,
+          backgroundColor: null
+        });
+
+        const link = document.createElement('a');
+        const safeName = (previewName.textContent || 'card')
+          .replace(/[^a-zA-Z0-9\u0600-\u06FF\s_-]/g, '')
+          .trim() || 'card';
+
+        link.download = safeName + '-sadara-card.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      } catch (e) {
+        alert('Download failed');
+        console.error(e);
+      }
+    });
+
+    setLang('both');
   </script>
 </body>
 </html>
