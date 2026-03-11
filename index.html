@@ -13,7 +13,7 @@
     html, body {
       margin: 0;
       width: 100%;
-      height: 100%;
+      min-height: 100%;
       font-family: Arial, Helvetica, sans-serif;
       background: #e9e4da;
     }
@@ -32,12 +32,23 @@
       display: block;
     }
 
+    /* =========================
+       LANDING PAGE
+    ========================= */
     .page {
       position: relative;
       width: 100vw;
       height: 100vh;
       overflow: hidden;
       background: #e9e4da;
+    }
+
+    .desktop-layer {
+      display: block;
+    }
+
+    .mobile-layer {
+      display: none;
     }
 
     .bg {
@@ -95,6 +106,11 @@
       width: 30%;
       min-width: 300px;
       z-index: 10;
+      transition: bottom 0.2s ease;
+    }
+
+    .page.lang-both .input-area {
+      bottom: 8.5%;
     }
 
     .input-wrap {
@@ -163,6 +179,9 @@
       background: rgba(255,255,255,0.14);
     }
 
+    /* =========================
+       PREVIEW / DOWNLOAD PAGE
+    ========================= */
     .preview-screen {
       min-height: 100vh;
       background: #07111e;
@@ -205,26 +224,26 @@
       transform: translateX(-50%);
       width: 76%;
       text-align: center;
-      color: #5b5b5b;
+      color: #6d6d6d;
       font-weight: 800;
-      line-height: 1.15;
+      line-height: 1.12;
       word-break: break-word;
       font-size: clamp(24px, 4vw, 34px);
       z-index: 5;
     }
 
     .card-name.en {
-      top: 48%;
+      top: 52.8%;
       direction: ltr;
     }
 
     .card-name.ar {
-      top: 43%;
+      top: 46.8%;
       direction: rtl;
     }
 
     .card-name.both {
-      top: 50%;
+      top: 57%;
       direction: ltr;
     }
 
@@ -255,37 +274,53 @@
       border: 1px solid rgba(255,255,255,0.12);
     }
 
+    /* =========================
+       MOBILE LANDING
+    ========================= */
     @media (max-width: 900px) {
-      .logo {
-        top: 4%;
-        left: 7%;
-        width: 28%;
-        min-width: 100px;
+      .desktop-layer {
+        display: none;
       }
 
-      .eid-title {
-        top: 15%;
-        left: 15%;
-        width: 58%;
+      .mobile-layer {
+        display: block;
       }
 
-      .message {
-        top: 46%;
-        left: 9%;
-        width: 82%;
+      .page {
+        background: #e9e4da;
       }
 
-      .plant {
-        width: 82%;
-        right: 9%;
-        bottom: 0;
+      .mobile-bg {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: 1;
       }
 
       .input-area {
         left: 14%;
-        bottom: 28%;
         width: 72%;
         min-width: 0;
+        bottom: 30.5%;
+      }
+
+      .page.lang-en .input-area {
+        bottom: 31.5%;
+      }
+
+      .page.lang-ar .input-area {
+        bottom: 29.5%;
+      }
+
+      .page.lang-both .input-area {
+        bottom: 32%;
+      }
+
+      .input-wrap {
+        background: rgba(255,255,255,0.97);
+        box-shadow: none;
       }
 
       .input-wrap input {
@@ -311,13 +346,23 @@
 
   <!-- LANDING SCREEN -->
   <section id="landingScreen" class="screen active">
-    <div class="page">
-      <img class="bg" src="BG-horizontal.png" alt="Background" />
-      <img class="logo" src="Logo-horizontal.png" alt="Sadara Logo" />
-      <img class="eid-title" id="eidTitle" src="Eid%20Mubarak-horizontal.png" alt="Eid Mubarak" />
-      <img class="message" id="messageImg" src="Best-Wishes-Bi-horizontal.png" alt="Greeting Message" />
-      <img class="plant" src="Icon-horizontal.png" alt="Plant" />
+    <div id="pageRoot" class="page lang-both">
 
+      <!-- DESKTOP HORIZONTAL -->
+      <div class="desktop-layer">
+        <img class="bg" src="BG-horizontal.png" alt="Background" />
+        <img class="logo" src="Logo-horizontal.png" alt="Sadara Logo" />
+        <img class="eid-title" src="Eid%20Mubarak-horizontal.png" alt="Eid Mubarak" />
+        <img class="message" id="messageImg" src="Best-Wishes-Bi-horizontal.png" alt="Greeting Message" />
+        <img class="plant" src="Icon-horizontal.png" alt="Plant" />
+      </div>
+
+      <!-- MOBILE VERTICAL -->
+      <div class="mobile-layer">
+        <img id="mobileBg" class="mobile-bg" src="Eid-Fitr-Cards-bi.png" alt="Mobile Greeting Design" />
+      </div>
+
+      <!-- SHARED INPUT -->
       <div class="input-area">
         <div class="input-wrap">
           <input id="nameInput" type="text" maxlength="40" placeholder="...اكتب اسمك هنا" dir="rtl" />
@@ -337,7 +382,7 @@
   <section id="previewScreen" class="preview-screen">
     <div class="card-shell">
       <div id="exportCard" class="card-export">
-        <img id="previewBase" src="Best-Wishes-bi-vertical.png" alt="Final Card" />
+        <img id="previewBase" src="Cards_Bi.png" alt="Final Card" />
         <div id="previewName" class="card-name both">Ahmed</div>
       </div>
     </div>
@@ -352,10 +397,13 @@
     const landingScreen = document.getElementById('landingScreen');
     const previewScreen = document.getElementById('previewScreen');
 
+    const pageRoot = document.getElementById('pageRoot');
     const nameInput = document.getElementById('nameInput');
     const sendBtn = document.getElementById('sendBtn');
 
     const messageImg = document.getElementById('messageImg');
+    const mobileBg = document.getElementById('mobileBg');
+
     const previewBase = document.getElementById('previewBase');
     const previewName = document.getElementById('previewName');
 
@@ -374,36 +422,53 @@
       if (lang === 'both') document.getElementById('btnBoth').classList.add('active');
     }
 
+    function setPageClass(lang) {
+      pageRoot.classList.remove('lang-en', 'lang-ar', 'lang-both');
+      if (lang === 'en') pageRoot.classList.add('lang-en');
+      if (lang === 'ar') pageRoot.classList.add('lang-ar');
+      if (lang === 'both') pageRoot.classList.add('lang-both');
+    }
+
     function setLang(lang) {
       currentLang = lang;
+      setPageClass(lang);
 
       if (lang === 'en') {
         messageImg.src = 'Best-Wishes-Eng-horizontal.png';
-        previewBase.src = 'Best-Wishes-Eng-vertical.png';
+        mobileBg.src = 'Eid-Fitr-Cards-En.png';
+        previewBase.src = 'Cards_Eng.png';
+        previewName.className = 'card-name en';
+
         nameInput.placeholder = 'Write your name here...';
         nameInput.dir = 'ltr';
+
         sendBtn.textContent = 'Send';
         downloadBtn.textContent = '⬇ Download Card';
         newCardBtn.textContent = '↻ New Card';
-        previewName.className = 'card-name en';
       } else if (lang === 'ar') {
         messageImg.src = 'Best-Wishes-Ar-horizontal.png';
-        previewBase.src = 'Best-Wishes-Ar-vertical.png';
+        mobileBg.src = 'Eid-Fitr-Cards-Ar.png';
+        previewBase.src = 'Cards_Ar.png';
+        previewName.className = 'card-name ar';
+
         nameInput.placeholder = '...اكتب اسمك هنا';
         nameInput.dir = 'rtl';
+
         sendBtn.textContent = 'إرسال';
         downloadBtn.textContent = '⬇ تحميل البطاقة';
         newCardBtn.textContent = '↻ بطاقة جديدة';
-        previewName.className = 'card-name ar';
       } else {
         messageImg.src = 'Best-Wishes-Bi-horizontal.png';
-        previewBase.src = 'Best-Wishes-bi-vertical.png';
+        mobileBg.src = 'Eid-Fitr-Cards-bi.png';
+        previewBase.src = 'Cards_Bi.png';
+        previewName.className = 'card-name both';
+
         nameInput.placeholder = '...اكتب اسمك هنا';
         nameInput.dir = 'auto';
+
         sendBtn.textContent = 'Send';
         downloadBtn.textContent = '⬇ Download Card';
         newCardBtn.textContent = '↻ New Card';
-        previewName.className = 'card-name both';
       }
 
       setActive(lang);
