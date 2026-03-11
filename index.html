@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sadara Greeting Card</title>
-  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <style>
     * {
       box-sizing: border-box;
@@ -32,9 +31,6 @@
       display: block;
     }
 
-    /* =========================
-       LANDING PAGE 
-    ========================= */
     .page {
       position: relative;
       width: 100vw;
@@ -101,16 +97,16 @@
 
     .input-area {
       position: absolute;
-      left: 5.2%;
+      left: 7.2%;
       bottom: 10.5%;
       width: 30%;
       min-width: 300px;
       z-index: 10;
-      transition: bottom 0.2s ease;
+      transition: bottom 0.2s ease, left 0.2s ease;
     }
 
     .page.lang-both .input-area {
-      bottom: 8.5%;
+      bottom: 7%;
     }
 
     .input-wrap {
@@ -179,9 +175,6 @@
       background: rgba(255,255,255,0.14);
     }
 
-    /* =========================
-       PREVIEW / DOWNLOAD PAGE
-    ========================= */
     .preview-screen {
       min-height: 100vh;
       background: #07111e;
@@ -274,9 +267,62 @@
       border: 1px solid rgba(255,255,255,0.12);
     }
 
-    /* =========================
-       MOBILE LANDING
-    ========================= */
+    /* hidden render canvas */
+    .render-area {
+      position: fixed;
+      left: -99999px;
+      top: -99999px;
+      width: 900px;
+      height: 1600px;
+      pointer-events: none;
+      opacity: 0;
+    }
+
+    .render-card {
+      width: 900px;
+      height: 1600px;
+      position: relative;
+      overflow: hidden;
+      background: #efe8dc;
+    }
+
+    .render-card img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+    }
+
+    .render-name {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 76%;
+      text-align: center;
+      color: #6d6d6d;
+      font-weight: 800;
+      line-height: 1.12;
+      word-break: break-word;
+      font-size: 64px;
+      z-index: 5;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .render-name.en {
+      top: 52.8%;
+      direction: ltr;
+    }
+
+    .render-name.ar {
+      top: 46.8%;
+      direction: rtl;
+    }
+
+    .render-name.both {
+      top: 57%;
+      direction: ltr;
+    }
+
     @media (max-width: 900px) {
       .desktop-layer {
         display: none;
@@ -284,10 +330,6 @@
 
       .mobile-layer {
         display: block;
-      }
-
-      .page {
-        background: #e9e4da;
       }
 
       .mobile-bg {
@@ -300,14 +342,14 @@
       }
 
       .input-area {
-        left: 14%;
+        left: 16%;
         width: 72%;
         min-width: 0;
         bottom: 30.5%;
       }
 
       .page.lang-en .input-area {
-        bottom: 31.5%;
+        bottom: 31%;
       }
 
       .page.lang-ar .input-area {
@@ -315,11 +357,10 @@
       }
 
       .page.lang-both .input-area {
-        bottom: 32%;
+        bottom: 33.5%;
       }
 
       .input-wrap {
-        background: rgba(255,255,255,0.97);
         box-shadow: none;
       }
 
@@ -340,15 +381,55 @@
         bottom: 3%;
       }
     }
+
+    @media (max-width: 560px) {
+      .input-area {
+        left: 16%;
+        width: 72%;
+      }
+
+      .page.lang-en .input-area {
+        bottom: 31%;
+      }
+
+      .page.lang-ar .input-area {
+        bottom: 29%;
+      }
+
+      .page.lang-both .input-area {
+        bottom: 33%;
+      }
+
+      .input-wrap input {
+        font-size: 15px;
+        padding: 0 12px;
+      }
+
+      .send-btn {
+        min-width: 96px;
+        height: 40px;
+        font-size: 15px;
+        padding: 0 18px;
+      }
+
+      .lang-switch button {
+        min-width: 68px;
+        padding: 10px 14px;
+        font-size: 13px;
+      }
+
+      .action-btn {
+        font-size: 17px;
+        height: 54px;
+      }
+    }
   </style>
 </head>
 <body>
 
-  <!-- LANDING SCREEN -->
   <section id="landingScreen" class="screen active">
     <div id="pageRoot" class="page lang-both">
 
-      <!-- DESKTOP HORIZONTAL -->
       <div class="desktop-layer">
         <img class="bg" src="BG-horizontal.png" alt="Background" />
         <img class="logo" src="Logo-horizontal.png" alt="Sadara Logo" />
@@ -357,12 +438,10 @@
         <img class="plant" src="Icon-horizontal.png" alt="Plant" />
       </div>
 
-      <!-- MOBILE VERTICAL -->
       <div class="mobile-layer">
         <img id="mobileBg" class="mobile-bg" src="Eid-Fitr-Cards-bi.png" alt="Mobile Greeting Design" />
       </div>
 
-      <!-- SHARED INPUT -->
       <div class="input-area">
         <div class="input-wrap">
           <input id="nameInput" type="text" maxlength="40" placeholder="...اكتب اسمك هنا" dir="rtl" />
@@ -378,7 +457,6 @@
     </div>
   </section>
 
-  <!-- PREVIEW / DOWNLOAD SCREEN -->
   <section id="previewScreen" class="preview-screen">
     <div class="card-shell">
       <div id="exportCard" class="card-export">
@@ -392,6 +470,14 @@
       <button id="newCardBtn" class="action-btn secondary" type="button">↻ New Card</button>
     </div>
   </section>
+
+  <!-- hidden high-res renderer -->
+  <div class="render-area" aria-hidden="true">
+    <div id="renderCard" class="render-card">
+      <img id="renderBase" src="Cards_Bi.png" alt="Render Card" />
+      <div id="renderName" class="render-name both">Ahmed</div>
+    </div>
+  </div>
 
   <script>
     const landingScreen = document.getElementById('landingScreen');
@@ -407,10 +493,28 @@
     const previewBase = document.getElementById('previewBase');
     const previewName = document.getElementById('previewName');
 
+    const renderBase = document.getElementById('renderBase');
+    const renderName = document.getElementById('renderName');
+
     const downloadBtn = document.getElementById('downloadBtn');
     const newCardBtn = document.getElementById('newCardBtn');
 
     let currentLang = 'both';
+
+    const imageCache = {};
+
+    function preloadImage(src) {
+      return new Promise((resolve, reject) => {
+        if (imageCache[src]) return resolve(imageCache[src]);
+        const img = new Image();
+        img.onload = () => {
+          imageCache[src] = img;
+          resolve(img);
+        };
+        img.onerror = reject;
+        img.src = src;
+      });
+    }
 
     function setActive(lang) {
       document.getElementById('btnEn').classList.remove('active');
@@ -429,7 +533,7 @@
       if (lang === 'both') pageRoot.classList.add('lang-both');
     }
 
-    function setLang(lang) {
+    async function setLang(lang) {
       currentLang = lang;
       setPageClass(lang);
 
@@ -437,7 +541,9 @@
         messageImg.src = 'Best-Wishes-Eng-horizontal.png';
         mobileBg.src = 'Eid-Fitr-Cards-En.png';
         previewBase.src = 'Cards_Eng.png';
+        renderBase.src = 'Cards_Eng.png';
         previewName.className = 'card-name en';
+        renderName.className = 'render-name en';
 
         nameInput.placeholder = 'Write your name here...';
         nameInput.dir = 'ltr';
@@ -445,11 +551,19 @@
         sendBtn.textContent = 'Send';
         downloadBtn.textContent = '⬇ Download Card';
         newCardBtn.textContent = '↻ New Card';
+
+        await Promise.allSettled([
+          preloadImage('Best-Wishes-Eng-horizontal.png'),
+          preloadImage('Eid-Fitr-Cards-En.png'),
+          preloadImage('Cards_Eng.png')
+        ]);
       } else if (lang === 'ar') {
         messageImg.src = 'Best-Wishes-Ar-horizontal.png';
         mobileBg.src = 'Eid-Fitr-Cards-Ar.png';
         previewBase.src = 'Cards_Ar.png';
+        renderBase.src = 'Cards_Ar.png';
         previewName.className = 'card-name ar';
+        renderName.className = 'render-name ar';
 
         nameInput.placeholder = '...اكتب اسمك هنا';
         nameInput.dir = 'rtl';
@@ -457,11 +571,19 @@
         sendBtn.textContent = 'إرسال';
         downloadBtn.textContent = '⬇ تحميل البطاقة';
         newCardBtn.textContent = '↻ بطاقة جديدة';
+
+        await Promise.allSettled([
+          preloadImage('Best-Wishes-Ar-horizontal.png'),
+          preloadImage('Eid-Fitr-Cards-Ar.png'),
+          preloadImage('Cards_Ar.png')
+        ]);
       } else {
         messageImg.src = 'Best-Wishes-Bi-horizontal.png';
         mobileBg.src = 'Eid-Fitr-Cards-bi.png';
         previewBase.src = 'Cards_Bi.png';
+        renderBase.src = 'Cards_Bi.png';
         previewName.className = 'card-name both';
+        renderName.className = 'render-name both';
 
         nameInput.placeholder = '...اكتب اسمك هنا';
         nameInput.dir = 'auto';
@@ -469,6 +591,12 @@
         sendBtn.textContent = 'Send';
         downloadBtn.textContent = '⬇ Download Card';
         newCardBtn.textContent = '↻ New Card';
+
+        await Promise.allSettled([
+          preloadImage('Best-Wishes-Bi-horizontal.png'),
+          preloadImage('Eid-Fitr-Cards-bi.png'),
+          preloadImage('Cards_Bi.png')
+        ]);
       }
 
       setActive(lang);
@@ -487,6 +615,8 @@
       }
 
       previewName.textContent = enteredName;
+      renderName.textContent = enteredName;
+
       landingScreen.classList.remove('active');
       previewScreen.classList.add('active');
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -506,22 +636,70 @@
       }
     });
 
+    async function makeDownloadFromCanvas() {
+      const canvas = document.createElement('canvas');
+      canvas.width = 900;
+      canvas.height = 1600;
+      const ctx = canvas.getContext('2d');
+
+      const file =
+        currentLang === 'en' ? 'Cards_Eng.png' :
+        currentLang === 'ar' ? 'Cards_Ar.png' :
+        'Cards_Bi.png';
+
+      const img = await preloadImage(file);
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = '#6d6d6d';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+      ctx.font = '800 64px Arial';
+
+      const text = renderName.textContent || 'Name';
+      const maxWidth = canvas.width * 0.76;
+      const centerX = canvas.width / 2;
+
+      let topY = 0;
+      if (currentLang === 'en') topY = canvas.height * 0.528;
+      if (currentLang === 'ar') topY = canvas.height * 0.468;
+      if (currentLang === 'both') topY = canvas.height * 0.57;
+
+      function wrapText(text, maxWidth) {
+        const words = text.split(' ');
+        const lines = [];
+        let line = '';
+
+        for (let n = 0; n < words.length; n++) {
+          const testLine = line ? line + ' ' + words[n] : words[n];
+          const metrics = ctx.measureText(testLine);
+          if (metrics.width > maxWidth && line) {
+            lines.push(line);
+            line = words[n];
+          } else {
+            line = testLine;
+          }
+        }
+        if (line) lines.push(line);
+        return lines;
+      }
+
+      const lines = currentLang === 'ar' ? [text] : wrapText(text, maxWidth);
+      const lineHeight = 74;
+
+      lines.forEach((line, index) => {
+        ctx.fillText(line, centerX, topY + index * lineHeight);
+      });
+
+      const link = document.createElement('a');
+      const safeName = text.replace(/[^a-zA-Z0-9\u0600-\u06FF\s_-]/g, '').trim() || 'card';
+      link.download = safeName + '-sadara-card.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
+
     downloadBtn.addEventListener('click', async function () {
       try {
-        const canvas = await html2canvas(document.getElementById('exportCard'), {
-          scale: 3,
-          useCORS: true,
-          backgroundColor: null
-        });
-
-        const link = document.createElement('a');
-        const safeName = (previewName.textContent || 'card')
-          .replace(/[^a-zA-Z0-9\u0600-\u06FF\s_-]/g, '')
-          .trim() || 'card';
-
-        link.download = safeName + '-sadara-card.png';
-        link.href = canvas.toDataURL('image/png');
-        link.click();
+        await makeDownloadFromCanvas();
       } catch (e) {
         alert('Download failed');
         console.error(e);
