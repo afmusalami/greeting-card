@@ -1,712 +1,358 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sadara Greeting Card</title>
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sadara Eid Greeting</title>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
-    html, body {
-      margin: 0;
-      width: 100%;
-      min-height: 100%;
-      font-family: Arial, Helvetica, sans-serif;
-      background: #e9e4da;
-    }
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
 
-    body {
-      overflow-x: hidden;
-    }
+html,body{
+font-family:Arial,Helvetica,sans-serif;
+background:#f7f2e9;
+width:100%;
+min-height:100%;
+overflow-x:hidden
+}
 
-    .screen {
-      display: none;
-      width: 100%;
-      min-height: 100vh;
-    }
+.screen{display:none;width:100%;min-height:100vh}
+.screen.active{display:block}
 
-    .screen.active {
-      display: block;
-    }
+/* ---------------- LANDING ---------------- */
 
-    .page {
-      position: relative;
-      width: 100vw;
-      height: 100vh;
-      overflow: hidden;
-      background: #e9e4da;
-    }
+.landing{
+position:relative;
+width:100%;
+min-height:100vh;
+overflow:hidden
+}
 
-    .desktop-layer {
-      display: block;
-    }
+.layer{
+position:absolute;
+pointer-events:none
+}
 
-    .mobile-layer {
-      display: none;
-    }
+.bg{inset:0;width:100%;height:100%;object-fit:cover;z-index:1}
+.logo{top:5%;left:4%;width:15%;max-width:240px;z-index:3}
+.eid{top:23%;left:6%;width:28%;max-width:420px;z-index:3}
+.msg{top:56%;left:4%;width:40%;max-width:600px;z-index:3}
+.plant{right:0;bottom:0;width:55%;max-width:900px;z-index:2}
 
-    .bg {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      z-index: 1;
-    }
+/* input */
 
-    .logo {
-      position: absolute;
-      top: 5%;
-      left: 4%;
-      width: 15.5%;
-      max-width: 250px;
-      min-width: 110px;
-      z-index: 5;
-    }
+.input-area{
+position:absolute;
+left:7%;
+bottom:10%;
+width:30%;
+max-width:550px;
+z-index:5
+}
 
-    .eid-title {
-      position: absolute;
-      top: 23%;
-      left: 6%;
-      width: 27%;
-      max-width: 460px;
-      min-width: 180px;
-      z-index: 5;
-    }
+.input-wrap{
+width:100%;
+height:60px;
+background:rgba(255,255,255,0.96);
+border-radius:999px;
+display:flex;
+align-items:center;
+padding:6px;
+box-shadow:0 10px 30px rgba(0,0,0,0.08)
+}
 
-    .message {
-      position: absolute;
-      left: 3.8%;
-      top: 57%;
-      width: 39%;
-      max-width: 760px;
-      min-width: 240px;
-      z-index: 5;
-    }
+.input-wrap input{
+flex:1;
+border:none;
+outline:none;
+background:transparent;
+text-align:center;
+font-size:18px;
+color:#666
+}
 
-    .plant {
-      position: absolute;
-      right: 0;
-      bottom: 0;
-      width: 55%;
-      max-width: 980px;
-      z-index: 4;
-    }
+.send-btn{
+background:#575757;
+color:#fff;
+border:none;
+border-radius:999px;
+height:48px;
+padding:0 24px;
+font-size:18px;
+font-weight:700;
+cursor:pointer
+}
 
-    .input-area {
-      position: absolute;
-      left: 7.2%;
-      bottom: 10.5%;
-      width: 30%;
-      min-width: 300px;
-      z-index: 10;
-      transition: bottom 0.2s ease, left 0.2s ease;
-    }
+/* language switch */
 
-    .page.lang-both .input-area {
-      bottom: 7%;
-    }
+.lang-switch{
+position:absolute;
+right:3%;
+bottom:3%;
+display:flex;
+background:#555;
+border-radius:999px;
+overflow:hidden;
+z-index:6
+}
 
-    .input-wrap {
-      display: flex;
-      align-items: center;
-      background: rgba(255,255,255,0.96);
-      border-radius: 999px;
-      padding: 5px;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
-    }
+.lang-btn{
+background:transparent;
+color:#fff;
+border:none;
+padding:12px 18px;
+font-weight:700;
+cursor:pointer
+}
 
-    .input-wrap input {
-      flex: 1;
-      border: none;
-      outline: none;
-      background: transparent;
-      font-size: 18px;
-      color: #6b6b6b;
-      padding: 14px 20px;
-      text-align: center;
-    }
+.lang-btn.active{background:rgba(255,255,255,0.15)}
 
-    .input-wrap input::placeholder {
-      color: #7b7b7b;
-      opacity: 1;
-    }
+/* ---------------- PREVIEW ---------------- */
 
-    .send-btn {
-      border: none;
-      background: #5a5a5a;
-      color: #fff;
-      border-radius: 999px;
-      padding: 14px 32px;
-      font-size: 18px;
-      font-weight: 700;
-      cursor: pointer;
-      min-width: 110px;
-    }
+.preview-screen{
+display:none;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+min-height:100vh;
+background:#07111e;
+padding:24px 16px;
+gap:18px
+}
 
-    .lang-switch {
-      position: absolute;
-      right: 3.5%;
-      bottom: 4.3%;
-      display: flex;
-      align-items: center;
-      background: #6a6a6a;
-      border-radius: 999px;
-      padding: 4px;
-      z-index: 10;
-      gap: 2px;
-    }
+.preview-screen.active{display:flex}
 
-    .lang-switch button {
-      border: none;
-      background: transparent;
-      color: #fff;
-      padding: 10px 16px;
-      border-radius: 999px;
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      min-width: 62px;
-    }
+.card-export{
+width:min(430px,100%);
+aspect-ratio:9/16;
+border-radius:26px;
+overflow:hidden;
+position:relative;
+box-shadow:0 20px 50px rgba(0,0,0,0.25)
+}
 
-    .lang-switch button.active {
-      background: rgba(255,255,255,0.14);
-    }
+.card-export img{width:100%;height:100%;object-fit:cover}
 
-    .preview-screen {
-      min-height: 100vh;
-      background: #07111e;
-      display: none;
-      padding: 26px 16px 34px;
-    }
+.card-name{
+position:absolute;
+left:50%;
+transform:translateX(-50%);
+width:78%;
+text-align:center;
+font-weight:800;
+color:#595959;
+font-size:clamp(26px,4vw,36px);
+line-height:1.15
+}
 
-    .preview-screen.active {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 18px;
-    }
+.card-name.en{top:48%}
+.card-name.ar{top:43%;direction:rtl}
+.card-name.both{top:50%}
 
-    .card-shell {
-      width: min(430px, 100%);
-    }
+.actions{
+width:min(430px,100%);
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:12px
+}
 
-    .card-export {
-      width: 100%;
-      aspect-ratio: 9 / 16;
-      position: relative;
-      overflow: hidden;
-      border-radius: 26px;
-      background: #efe8dc;
-      box-shadow: 0 18px 40px rgba(0,0,0,0.28);
-    }
+.action-btn{
+height:58px;
+border-radius:999px;
+border:none;
+font-size:20px;
+font-weight:700;
+cursor:pointer
+}
 
-    .card-export img {
-      width: 100%;
-      height: 100%;
-      display: block;
-      object-fit: cover;
-    }
+.action-btn.primary{background:linear-gradient(180deg,#3f83ff,#2f6ff1);color:white}
+.action-btn.secondary{background:rgba(255,255,255,0.06);color:white}
 
-    .card-name {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 76%;
-      text-align: center;
-      color: #6d6d6d;
-      font-weight: 800;
-      line-height: 1.12;
-      word-break: break-word;
-      font-size: clamp(24px, 4vw, 34px);
-      z-index: 5;
-    }
+/* ---------------- MOBILE ---------------- */
 
-    .card-name.en {
-      top: 52.8%;
-      direction: ltr;
-    }
+@media(max-width:900px){
 
-    .card-name.ar {
-      top: 46.8%;
-      direction: rtl;
-    }
+.logo{top:6%;left:6%;width:32%}
+.eid{top:18%;left:50%;transform:translateX(-50%);width:70%}
+.msg{top:43%;left:50%;transform:translateX(-50%);width:80%}
+.plant{width:100%;opacity:.95}
 
-    .card-name.both {
-      top: 57%;
-      direction: ltr;
-    }
+.input-area{
+left:15%;
+bottom:28%;
+width:70%
+}
 
-    .actions {
-      width: min(430px, 100%);
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
+.input-wrap{height:54px}
+.send-btn{height:42px;font-size:16px}
 
-    .action-btn {
-      border: none;
-      cursor: pointer;
-      height: 58px;
-      border-radius: 999px;
-      font-size: 18px;
-      font-weight: 700;
-    }
+.lang-switch{
+right:50%;
+transform:translateX(50%);
+bottom:2.5%
+}
 
-    .action-btn.primary {
-      background: linear-gradient(180deg, #3f83ff 0%, #2f6ff1 100%);
-      color: white;
-    }
-
-    .action-btn.secondary {
-      background: rgba(255,255,255,0.08);
-      color: rgba(255,255,255,0.92);
-      border: 1px solid rgba(255,255,255,0.12);
-    }
-
-    /* hidden render canvas */
-    .render-area {
-      position: fixed;
-      left: -99999px;
-      top: -99999px;
-      width: 900px;
-      height: 1600px;
-      pointer-events: none;
-      opacity: 0;
-    }
-
-    .render-card {
-      width: 900px;
-      height: 1600px;
-      position: relative;
-      overflow: hidden;
-      background: #efe8dc;
-    }
-
-    .render-card img {
-      width: 100%;
-      height: 100%;
-      display: block;
-      object-fit: cover;
-    }
-
-    .render-name {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 76%;
-      text-align: center;
-      color: #6d6d6d;
-      font-weight: 800;
-      line-height: 1.12;
-      word-break: break-word;
-      font-size: 64px;
-      z-index: 5;
-      font-family: Arial, Helvetica, sans-serif;
-    }
-
-    .render-name.en {
-      top: 52.8%;
-      direction: ltr;
-    }
-
-    .render-name.ar {
-      top: 46.8%;
-      direction: rtl;
-    }
-
-    .render-name.both {
-      top: 57%;
-      direction: ltr;
-    }
-
-    @media (max-width: 900px) {
-      .desktop-layer {
-        display: none;
-      }
-
-      .mobile-layer {
-        display: block;
-      }
-
-      .mobile-bg {
-        position: absolute;
-        inset: 0;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        z-index: 1;
-      }
-
-      .input-area {
-        left: 16%;
-        width: 72%;
-        min-width: 0;
-        bottom: 30.5%;
-      }
-
-      .page.lang-en .input-area {
-        bottom: 31%;
-      }
-
-      .page.lang-ar .input-area {
-        bottom: 29.5%;
-      }
-
-      .page.lang-both .input-area {
-        bottom: 33.5%;
-      }
-
-      .input-wrap {
-        box-shadow: none;
-      }
-
-      .input-wrap input {
-        font-size: 16px;
-        padding: 13px 14px;
-      }
-
-      .send-btn {
-        font-size: 16px;
-        padding: 13px 22px;
-        min-width: 100px;
-      }
-
-      .lang-switch {
-        right: 50%;
-        transform: translateX(50%);
-        bottom: 3%;
-      }
-    }
-
-    @media (max-width: 560px) {
-      .input-area {
-        left: 16%;
-        width: 72%;
-      }
-
-      .page.lang-en .input-area {
-        bottom: 31%;
-      }
-
-      .page.lang-ar .input-area {
-        bottom: 29%;
-      }
-
-      .page.lang-both .input-area {
-        bottom: 33%;
-      }
-
-      .input-wrap input {
-        font-size: 15px;
-        padding: 0 12px;
-      }
-
-      .send-btn {
-        min-width: 96px;
-        height: 40px;
-        font-size: 15px;
-        padding: 0 18px;
-      }
-
-      .lang-switch button {
-        min-width: 68px;
-        padding: 10px 14px;
-        font-size: 13px;
-      }
-
-      .action-btn {
-        font-size: 17px;
-        height: 54px;
-      }
-    }
-  </style>
+}
+</style>
 </head>
+
 <body>
 
-  <section id="landingScreen" class="screen active">
-    <div id="pageRoot" class="page lang-both">
+<section id="landingScreen" class="screen active">
 
-      <div class="desktop-layer">
-        <img class="bg" src="BG-horizontal.png" alt="Background" />
-        <img class="logo" src="Logo-horizontal.png" alt="Sadara Logo" />
-        <img class="eid-title" src="Eid%20Mubarak-horizontal.png" alt="Eid Mubarak" />
-        <img class="message" id="messageImg" src="Best-Wishes-Bi-horizontal.png" alt="Greeting Message" />
-        <img class="plant" src="Icon-horizontal.png" alt="Plant" />
-      </div>
+<div class="landing">
 
-      <div class="mobile-layer">
-        <img id="mobileBg" class="mobile-bg" src="Eid-Fitr-Cards-bi.png" alt="Mobile Greeting Design" />
-      </div>
+<img class="layer bg" src="BG-horizontal.png">
+<img class="layer logo" src="Logo-horizontal.png">
+<img class="layer eid" src="Eid-Mubarak-horizontal.png">
+<img id="msgImage" class="layer msg" src="Best-Wishes-Bi-horizontal.png">
+<img class="layer plant" src="Icon-horizontal.png">
 
-      <div class="input-area">
-        <div class="input-wrap">
-          <input id="nameInput" type="text" maxlength="40" placeholder="...اكتب اسمك هنا" dir="rtl" />
-          <button class="send-btn" id="sendBtn" type="button">Send</button>
-        </div>
-      </div>
+<div class="input-area">
+<div class="input-wrap">
+<input id="nameInput" type="text" placeholder="اكتب اسمك هنا...">
+<button id="sendBtn" class="send-btn">Send</button>
+</div>
+</div>
 
-      <div class="lang-switch">
-        <button id="btnEn" type="button" onclick="setLang('en')">EN</button>
-        <button id="btnAr" type="button" onclick="setLang('ar')">عربي</button>
-        <button id="btnBoth" type="button" class="active" onclick="setLang('both')">AR&EN</button>
-      </div>
-    </div>
-  </section>
+<div class="lang-switch">
+<button class="lang-btn" data-lang="en">EN</button>
+<button class="lang-btn" data-lang="ar">عربي</button>
+<button class="lang-btn active" data-lang="both">AR&EN</button>
+</div>
 
-  <section id="previewScreen" class="preview-screen">
-    <div class="card-shell">
-      <div id="exportCard" class="card-export">
-        <img id="previewBase" src="Cards_Bi.png" alt="Final Card" />
-        <div id="previewName" class="card-name both">Ahmed</div>
-      </div>
-    </div>
+</div>
 
-    <div class="actions">
-      <button id="downloadBtn" class="action-btn primary" type="button">⬇ Download Card</button>
-      <button id="newCardBtn" class="action-btn secondary" type="button">↻ New Card</button>
-    </div>
-  </section>
+</section>
 
-  <!-- hidden high-res renderer -->
-  <div class="render-area" aria-hidden="true">
-    <div id="renderCard" class="render-card">
-      <img id="renderBase" src="Cards_Bi.png" alt="Render Card" />
-      <div id="renderName" class="render-name both">Ahmed</div>
-    </div>
-  </div>
+<section id="previewScreen" class="preview-screen">
 
-  <script>
-    const landingScreen = document.getElementById('landingScreen');
-    const previewScreen = document.getElementById('previewScreen');
+<div id="exportCard" class="card-export">
+<img id="cardBase" src="Cards_Bi.png">
+<div id="cardName" class="card-name both">Ahmed</div>
+</div>
 
-    const pageRoot = document.getElementById('pageRoot');
-    const nameInput = document.getElementById('nameInput');
-    const sendBtn = document.getElementById('sendBtn');
+<div class="actions">
+<button id="downloadBtn" class="action-btn primary">⬇ Download Card</button>
+<button id="newCardBtn" class="action-btn secondary">↻ New Card</button>
+</div>
 
-    const messageImg = document.getElementById('messageImg');
-    const mobileBg = document.getElementById('mobileBg');
+</section>
 
-    const previewBase = document.getElementById('previewBase');
-    const previewName = document.getElementById('previewName');
+<script>
 
-    const renderBase = document.getElementById('renderBase');
-    const renderName = document.getElementById('renderName');
+const landingScreen=document.getElementById('landingScreen')
+const previewScreen=document.getElementById('previewScreen')
 
-    const downloadBtn = document.getElementById('downloadBtn');
-    const newCardBtn = document.getElementById('newCardBtn');
+const nameInput=document.getElementById('nameInput')
+const sendBtn=document.getElementById('sendBtn')
 
-    let currentLang = 'both';
+const msgImage=document.getElementById('msgImage')
+const cardBase=document.getElementById('cardBase')
+const cardName=document.getElementById('cardName')
 
-    const imageCache = {};
+const downloadBtn=document.getElementById('downloadBtn')
+const newCardBtn=document.getElementById('newCardBtn')
 
-    function preloadImage(src) {
-      return new Promise((resolve, reject) => {
-        if (imageCache[src]) return resolve(imageCache[src]);
-        const img = new Image();
-        img.onload = () => {
-          imageCache[src] = img;
-          resolve(img);
-        };
-        img.onerror = reject;
-        img.src = src;
-      });
-    }
+let lang='both'
 
-    function setActive(lang) {
-      document.getElementById('btnEn').classList.remove('active');
-      document.getElementById('btnAr').classList.remove('active');
-      document.getElementById('btnBoth').classList.remove('active');
+const config={
 
-      if (lang === 'en') document.getElementById('btnEn').classList.add('active');
-      if (lang === 'ar') document.getElementById('btnAr').classList.add('active');
-      if (lang === 'both') document.getElementById('btnBoth').classList.add('active');
-    }
+en:{
+msg:'Best-Wishes-Eng-horizontal.png',
+card:'Cards_Eng.png',
+nameClass:'en',
+placeholder:'Write your name here...',
+dir:'ltr'
+},
 
-    function setPageClass(lang) {
-      pageRoot.classList.remove('lang-en', 'lang-ar', 'lang-both');
-      if (lang === 'en') pageRoot.classList.add('lang-en');
-      if (lang === 'ar') pageRoot.classList.add('lang-ar');
-      if (lang === 'both') pageRoot.classList.add('lang-both');
-    }
+ar:{
+msg:'Best-Wishes-Ar-horizontal.png',
+card:'Cards_Ar.png',
+nameClass:'ar',
+placeholder:'...اكتب اسمك هنا',
+dir:'rtl'
+},
 
-    async function setLang(lang) {
-      currentLang = lang;
-      setPageClass(lang);
+both:{
+msg:'Best-Wishes-Bi-horizontal.png',
+card:'Cards_Bi.png',
+nameClass:'both',
+placeholder:'...اكتب اسمك هنا',
+dir:'rtl'
+}
+}
 
-      if (lang === 'en') {
-        messageImg.src = 'Best-Wishes-Eng-horizontal.png';
-        mobileBg.src = 'Eid-Fitr-Cards-En.png';
-        previewBase.src = 'Cards_Eng.png';
-        renderBase.src = 'Cards_Eng.png';
-        previewName.className = 'card-name en';
-        renderName.className = 'render-name en';
+function applyLang(l){
 
-        nameInput.placeholder = 'Write your name here...';
-        nameInput.dir = 'ltr';
+lang=l
 
-        sendBtn.textContent = 'Send';
-        downloadBtn.textContent = '⬇ Download Card';
-        newCardBtn.textContent = '↻ New Card';
+const d=config[l]
 
-        await Promise.allSettled([
-          preloadImage('Best-Wishes-Eng-horizontal.png'),
-          preloadImage('Eid-Fitr-Cards-En.png'),
-          preloadImage('Cards_Eng.png')
-        ]);
-      } else if (lang === 'ar') {
-        messageImg.src = 'Best-Wishes-Ar-horizontal.png';
-        mobileBg.src = 'Eid-Fitr-Cards-Ar.png';
-        previewBase.src = 'Cards_Ar.png';
-        renderBase.src = 'Cards_Ar.png';
-        previewName.className = 'card-name ar';
-        renderName.className = 'render-name ar';
+msgImage.src=d.msg
+cardBase.src=d.card
 
-        nameInput.placeholder = '...اكتب اسمك هنا';
-        nameInput.dir = 'rtl';
+nameInput.placeholder=d.placeholder
+nameInput.dir=d.dir
 
-        sendBtn.textContent = 'إرسال';
-        downloadBtn.textContent = '⬇ تحميل البطاقة';
-        newCardBtn.textContent = '↻ بطاقة جديدة';
+cardName.className='card-name '+d.nameClass
 
-        await Promise.allSettled([
-          preloadImage('Best-Wishes-Ar-horizontal.png'),
-          preloadImage('Eid-Fitr-Cards-Ar.png'),
-          preloadImage('Cards_Ar.png')
-        ]);
-      } else {
-        messageImg.src = 'Best-Wishes-Bi-horizontal.png';
-        mobileBg.src = 'Eid-Fitr-Cards-bi.png';
-        previewBase.src = 'Cards_Bi.png';
-        renderBase.src = 'Cards_Bi.png';
-        previewName.className = 'card-name both';
-        renderName.className = 'render-name both';
 
-        nameInput.placeholder = '...اكتب اسمك هنا';
-        nameInput.dir = 'auto';
+document.querySelectorAll('.lang-btn').forEach(b=>{
+b.classList.toggle('active',b.dataset.lang===l)
+})
 
-        sendBtn.textContent = 'Send';
-        downloadBtn.textContent = '⬇ Download Card';
-        newCardBtn.textContent = '↻ New Card';
+}
 
-        await Promise.allSettled([
-          preloadImage('Best-Wishes-Bi-horizontal.png'),
-          preloadImage('Eid-Fitr-Cards-bi.png'),
-          preloadImage('Cards_Bi.png')
-        ]);
-      }
 
-      setActive(lang);
-    }
+document.querySelectorAll('.lang-btn').forEach(btn=>{
+btn.onclick=()=>applyLang(btn.dataset.lang)
+})
 
-    sendBtn.addEventListener('click', function () {
-      const enteredName = nameInput.value.trim();
+sendBtn.onclick=()=>{
 
-      if (!enteredName) {
-        if (currentLang === 'ar') {
-          alert('يرجى كتابة الاسم أولاً');
-        } else {
-          alert('Please enter your name');
-        }
-        return;
-      }
+const name=nameInput.value.trim()
 
-      previewName.textContent = enteredName;
-      renderName.textContent = enteredName;
+if(!name){
+alert(lang==='ar'?'يرجى كتابة الاسم':'Please enter your name')
+return
+}
 
-      landingScreen.classList.remove('active');
-      previewScreen.classList.add('active');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
+cardName.textContent=name
 
-    newCardBtn.addEventListener('click', function () {
-      previewScreen.classList.remove('active');
-      landingScreen.classList.add('active');
-      nameInput.value = '';
-      nameInput.focus();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
+landingScreen.classList.remove('active')
+previewScreen.classList.add('active')
 
-    nameInput.addEventListener('keydown', function (e) {
-      if (e.key === 'Enter') {
-        sendBtn.click();
-      }
-    });
+}
 
-    async function makeDownloadFromCanvas() {
-      const canvas = document.createElement('canvas');
-      canvas.width = 900;
-      canvas.height = 1600;
-      const ctx = canvas.getContext('2d');
+newCardBtn.onclick=()=>{
 
-      const file =
-        currentLang === 'en' ? 'Cards_Eng.png' :
-        currentLang === 'ar' ? 'Cards_Ar.png' :
-        'Cards_Bi.png';
+previewScreen.classList.remove('active')
+landingScreen.classList.add('active')
 
-      const img = await preloadImage(file);
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+nameInput.value=''
 
-      ctx.fillStyle = '#6d6d6d';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'top';
-      ctx.font = '800 64px Arial';
+}
 
-      const text = renderName.textContent || 'Name';
-      const maxWidth = canvas.width * 0.76;
-      const centerX = canvas.width / 2;
 
-      let topY = 0;
-      if (currentLang === 'en') topY = canvas.height * 0.528;
-      if (currentLang === 'ar') topY = canvas.height * 0.468;
-      if (currentLang === 'both') topY = canvas.height * 0.57;
+downloadBtn.onclick=async()=>{
 
-      function wrapText(text, maxWidth) {
-        const words = text.split(' ');
-        const lines = [];
-        let line = '';
+const canvas=await html2canvas(document.getElementById('exportCard'),{
+scale:3,
+useCORS:true
+})
 
-        for (let n = 0; n < words.length; n++) {
-          const testLine = line ? line + ' ' + words[n] : words[n];
-          const metrics = ctx.measureText(testLine);
-          if (metrics.width > maxWidth && line) {
-            lines.push(line);
-            line = words[n];
-          } else {
-            line = testLine;
-          }
-        }
-        if (line) lines.push(line);
-        return lines;
-      }
+const link=document.createElement('a')
+link.download='sadara-eid-card.png'
+link.href=canvas.toDataURL()
+link.click()
 
-      const lines = currentLang === 'ar' ? [text] : wrapText(text, maxWidth);
-      const lineHeight = 74;
+}
 
-      lines.forEach((line, index) => {
-        ctx.fillText(line, centerX, topY + index * lineHeight);
-      });
+applyLang('both')
 
-      const link = document.createElement('a');
-      const safeName = text.replace(/[^a-zA-Z0-9\u0600-\u06FF\s_-]/g, '').trim() || 'card';
-      link.download = safeName + '-sadara-card.png';
-      link.href = canvas.toDataURL('image/png');
-      link.click();
-    }
+</script>
 
-    downloadBtn.addEventListener('click', async function () {
-      try {
-        await makeDownloadFromCanvas();
-      } catch (e) {
-        alert('Download failed');
-        console.error(e);
-      }
-    });
-
-    setLang('both');
-  </script>
 </body>
 </html>
