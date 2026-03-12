@@ -64,12 +64,14 @@ box-shadow:0 10px 30px rgba(0,0,0,0.08)
 
 .input-wrap input{
 flex:1;
+min-width:0;
 border:none;
 outline:none;
 background:transparent;
 text-align:center;
 font-size:18px;
-color:#666
+color:#666;
+padding:0 12px
 }
 
 .send-btn{
@@ -81,7 +83,8 @@ height:48px;
 padding:0 24px;
 font-size:18px;
 font-weight:700;
-cursor:pointer
+cursor:pointer;
+flex-shrink:0
 }
 
 /* language switch */
@@ -185,13 +188,64 @@ bottom:35%;
 width:70%
 }
 
-.input-wrap{height:54px}
-.send-btn{height:42px;font-size:16px}
+.input-wrap{
+height:54px
+}
+
+.input-wrap input{
+min-width:0;
+font-size:15px;
+padding:0 10px
+}
+
+.send-btn{
+min-width:84px;
+height:40px;
+font-size:15px;
+padding:0 14px
+}
 
 .lang-switch{
 right:50%;
 transform:translateX(50%);
 bottom:2.5%
+}
+
+}
+
+@media(max-width:560px){
+
+.input-area{
+left:15%;
+bottom:35%;
+width:70%
+}
+
+.input-wrap{
+height:52px
+}
+
+.input-wrap input{
+min-width:0;
+font-size:14px;
+padding:0 8px
+}
+
+.send-btn{
+min-width:78px;
+height:38px;
+font-size:14px;
+padding:0 12px
+}
+
+.lang-btn{
+padding:10px 14px;
+font-size:13px
+}
+
+.action-btn{
+font-size:17px;
+height:54px
 }
 
 }
