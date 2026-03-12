@@ -140,10 +140,11 @@ left:50%;
 transform:translateX(-50%);
 width:78%;
 text-align:center;
-font-weight:800;
-color:#3a3a3a;
+font-weight:900;
+color:#2b2b2b;
 font-size:clamp(26px,4vw,36px);
-line-height:1.15
+line-height:1.15;
+text-shadow:none
 }
 
 .card-name.en{top:52%}
@@ -298,13 +299,11 @@ nameInput.dir=d.dir
 
 cardName.className='card-name '+d.nameClass
 
-
 document.querySelectorAll('.lang-btn').forEach(b=>{
 b.classList.toggle('active',b.dataset.lang===l)
 })
 
 }
-
 
 document.querySelectorAll('.lang-btn').forEach(btn=>{
 btn.onclick=()=>applyLang(btn.dataset.lang)
@@ -334,7 +333,6 @@ landingScreen.classList.add('active')
 nameInput.value=''
 
 }
-
 
 downloadBtn.onclick=async()=>{
 
